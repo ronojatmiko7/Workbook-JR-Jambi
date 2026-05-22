@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 function generatePDFContent(data, name) {
   const lines = [];
   lines.push(`WORKBOOK DIKLAT — CUSTOMER FOCUS FOR BUSINESS GROWTH`);
-  lines.push(`Jasa Raharja Cabang Jambi`);
+  lines.push(`Jasa Raharja Wilayah Jambi`);
   lines.push(`Nama: ${name}`);
   lines.push(`Tanggal: ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`);
   lines.push(`${"─".repeat(60)}`);
@@ -139,7 +139,7 @@ function generatePDFHTML(data, name) {
   };
 
   let sectionsHTML = "";
-  sesiLabels.forEach(({ key, title, color }) => {
+  sesiLabels.forEach(({ key, title, color }, idx) => {
     const sesiData = data[key] || {};
     const fields = Object.entries(sesiData)
       .filter(([, v]) => v && v.trim())
@@ -151,7 +151,8 @@ function generatePDFHTML(data, name) {
 
     if (fields) {
       sectionsHTML += `
-      <div class="section">
+      <div class="section${idx > 0 ? " page-break" : ""}">
+        <div class="sesi-num">SESI ${idx + 1} / 4</div>
         <div class="section-title" style="background:${color}">${title}</div>
         ${fields}
       </div>`;
@@ -192,19 +193,21 @@ function generatePDFHTML(data, name) {
   .header-right{text-align:right;font-size:11px;color:#64748B}
   .header-right strong{display:block;font-size:14px;color:#0B2545;font-weight:700}
   .section{margin-bottom:24px}
+  .page-break{page-break-before:always;padding-top:32px}
+  .sesi-num{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:#94A3B8;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
   .section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;color:#fff;padding:7px 12px;margin-bottom:12px}
-  .field{margin-bottom:10px}
+  .field{margin-bottom:10px;page-break-inside:avoid}
   .field-label{font-size:9px;font-weight:600;color:#94A3B8;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
   .field-value{font-size:12px;color:#0F172A;line-height:1.6;padding:8px 12px;background:#F4F6FB;border-left:3px solid #2E5FA3}
-  .divider{height:3px;background:#0B2545;margin:32px 0 28px}
+  .divider{page-break-before:always;padding-top:32px;border-top:3px solid #0B2545;margin-bottom:28px}
   .ap-header{margin-bottom:20px}
   .ap-header h2{font-size:20px;font-weight:700;color:#0B2545}
   .ap-header p{font-size:11px;color:#64748B;margin-top:4px}
-  .ap-field{margin-bottom:14px}
+  .ap-field{margin-bottom:14px;page-break-inside:avoid}
   .ap-label{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
   .ap-value{font-size:12px;color:#0F172A;line-height:1.6;padding:10px 14px;background:#F4F6FB;border-left:3px solid #C9A84C}
-  .footer{margin-top:36px;padding-top:14px;border-top:1px solid #CBD5E1;font-size:10px;color:#94A3B8;display:flex;justify-content:space-between}
-  @media print{body{padding:20px}@page{margin:15mm}}
+  .footer{margin-top:36px;padding-top:14px;border-top:1px solid #CBD5E1;font-size:10px;color:#94A3B8;display:flex;justify-content:space-between;page-break-inside:avoid}
+  @media print{body{padding:20px}@page{margin:15mm}.page-break{page-break-before:always}.divider{page-break-before:always}}
 </style>
 </head>
 <body>
@@ -224,7 +227,7 @@ ${sectionsHTML}
 <div class="divider"></div>
 <div class="ap-header">
   <h2>Action Plan 90 Hari</h2>
-  <p>Komitmen perubahan yang akan diimplementasikan di Cabang Jambi</p>
+  <p>Komitmen perubahan yang akan diimplementasikan di Wilayah Jambi</p>
 </div>
 ${apFields || '<p style="color:#94A3B8;font-style:italic;font-size:12px">Action Plan belum diisi.</p>'}
 
@@ -402,7 +405,7 @@ function Sesi1({ data, onChange }) {
           <Field label="1. Segmen/area SWDKLLJ yang paling belum optimal?" value={data.gap_swdkllj} onChange={u("gap_swdkllj")} rows={3} />
           <Field label="4. Tindakan strategis dalam 30 hari ke depan?" value={data.tindakan30} onChange={u("tindakan30")} rows={3} />
           <Field label="2. Hambatan utama yang Anda lihat?" value={data.hambatan} onChange={u("hambatan")} rows={3} />
-          <Field label="5. Jika berhasil, dampaknya terhadap pendapatan cabang?" value={data.dampak_pendapatan} onChange={u("dampak_pendapatan")} rows={3} />
+          <Field label="5. Jika berhasil, dampaknya terhadap pendapatan wilayah?" value={data.dampak_pendapatan} onChange={u("dampak_pendapatan")} rows={3} />
           <Field label="3. Instansi mana yang bisa diajak kolaborasi?" value={data.instansi_kol} onChange={u("instansi_kol")} rows={3} />
         </div>
       </SectionCard>
@@ -504,9 +507,9 @@ function Sesi3({ data, onChange }) {
         </div>
       </SectionCard>
 
-      <SectionCard title="Audit Service Excellence Cabang Jambi" color={colors.s3}>
+      <SectionCard title="Audit Service Excellence Wilayah Jambi" color={colors.s3}>
         <p style={{ fontSize:13, color:"#64748B", marginBottom:16, fontStyle:"italic" }}>
-          Nilai kondisi pelayanan cabang Anda saat ini (1=Buruk, 5=Sangat Baik):
+          Nilai kondisi pelayanan wilayah Anda saat ini (1=Buruk, 5=Sangat Baik):
         </p>
         <ScoreField label="Waktu respons pertama kepada korban/ahli waris"
           value={data.skor_kecepatan} onChange={u("skor_kecepatan")} />
@@ -518,7 +521,7 @@ function Sesi3({ data, onChange }) {
           value={data.prioritas_perbaikan} onChange={u("prioritas_perbaikan")} rows={2} />
       </SectionCard>
 
-      <SectionCard title="Standar Pelayanan Cabang — Hasil Diskusi" color={colors.s3}>
+      <SectionCard title="Standar Pelayanan Wilayah — Hasil Diskusi" color={colors.s3}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
           <Field label="Standar KECEPATAN (waktu respons, verifikasi, eskalasi)"
             value={data.standar_kecepatan} onChange={u("standar_kecepatan")} rows={4}
@@ -552,7 +555,7 @@ function Sesi4({ data, onChange }) {
     <div>
       <p style={{ color:"#64748B", fontSize:14, marginBottom:24, lineHeight:1.7 }}>
         Sesi terakhir. Output utama: Action Plan 90 Hari yang akan Anda implementasikan
-        di Cabang Jambi setelah diklat ini.
+        di Wilayah Jambi setelah diklat ini.
       </p>
 
       <SectionCard title="Refleksi — Nilai AKHLAK" color={colors.s4}>
@@ -675,7 +678,7 @@ function Sesi4({ data, onChange }) {
           </div>
           <Field label="Bagaimana saya memastikan budaya ini berjalan meski saya tidak selalu hadir?"
             value={data.target90_sustainability} onChange={u("target90_sustainability")} rows={3} />
-          <Field label="Tanda keberhasilan 90 hari — apa yang akan berbeda di tim, pelayanan, dan pendapatan cabang?"
+          <Field label="Tanda keberhasilan 90 hari — apa yang akan berbeda di tim, pelayanan, dan pendapatan wilayah?"
             value={data.target90_success} onChange={u("target90_success")} rows={3} />
         </div>
 
@@ -801,7 +804,7 @@ export default function App() {
               Customer Focus for Business Growth
             </p>
             <p style={{ fontSize:13, color:"#64748B", marginTop:6, lineHeight:1.5 }}>
-              Jasa Raharja Cabang Jambi
+              Jasa Raharja Wilayah Jambi
             </p>
           </div>
 
@@ -867,7 +870,7 @@ export default function App() {
                       boxShadow:"0 24px 80px rgba(0,0,0,.3)" }}>
           <div style={{ fontSize:56, marginBottom:16 }}>🎉</div>
           <h2 style={{ fontSize:28, fontWeight:700, color:"#0B2545", marginBottom:8 }}>
-            Selamat, {name}!
+            Selamat, Pak {name}!
           </h2>
           <p style={{ fontSize:16, color:"#C9A84C", fontWeight:600, marginBottom:16 }}>
             Diklat Customer Focus for Business Growth
