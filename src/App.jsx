@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 function generatePDFContent(data, name) {
   const lines = [];
   lines.push(`WORKBOOK DIKLAT — CUSTOMER FOCUS FOR BUSINESS GROWTH`);
-  lines.push(`Jasa Raharja Cabang Jambi`);
+  lines.push(`Jasa Raharja Wilayah Jambi`);
   lines.push(`Nama: ${name}`);
   lines.push(`Tanggal: ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`);
   lines.push(`${"─".repeat(60)}`);
@@ -122,7 +122,7 @@ function generatePDFHTML(data, name) {
     prioritas_perbaikan:"Prioritas Perbaikan Utama",
     standar_kecepatan:"Standar Kecepatan", standar_kemudahan:"Standar Kemudahan",
     standar_empati:"Standar Empati", standar_followup:"Standar Follow-up",
-    akhlak_terapkan:"Nilai AKHLAK Paling Diterapkan", akhlak_menantang:"Nilai AKHLAK Paling Menantang",
+    akhlak_terapkan:"Nilai AKHLAK Paling Diterapkan", akhlak_menantang:"Nilai AKHLAK Paling Menantang", akhlak_pilihan:"Nilai AKHLAK Pilihan Saya", akhlak_pilihan_komitmen:"Aksi Konkret Nilai AKHLAK Pilihan",
     hambatan_komunikasi:"Hambatan Komunikasi", hambatan_proses:"Hambatan Proses",
     hambatan_perilaku:"Hambatan Perilaku", hambatan_sistem:"Hambatan Sistem",
     harmonis_komitmen:"Komitmen Harmonis", kolaboratif_komitmen:"Komitmen Kolaboratif",
@@ -373,7 +373,7 @@ const emptyData = {
   sesi3: { pelayanan_terbaik:"", pelayanan_terburuk:"", skor_kecepatan:"", skor_kemudahan:"",
            skor_empati:"", prioritas_perbaikan:"", standar_kecepatan:"", standar_kemudahan:"",
            standar_empati:"", standar_followup:"" },
-  sesi4: { akhlak_terapkan:"", akhlak_menantang:"", hambatan_komunikasi:"", hambatan_proses:"",
+  sesi4: { akhlak_terapkan:"", akhlak_menantang:"", akhlak_pilihan:"", akhlak_pilihan_komitmen:"", hambatan_komunikasi:"", hambatan_proses:"",
            hambatan_perilaku:"", hambatan_sistem:"", harmonis_komitmen:"", kolaboratif_komitmen:"",
            target30_tim:"", target30_pelayanan:"", target30_instansi:"", target60_sistem:"",
            target60_indikator:"", target90_sustainability:"", target90_success:"", komitmen_publik:"" },
@@ -528,7 +528,7 @@ function Sesi1({ data, onChange }) {
           <Field label="1. Segmen/area SWDKLLJ yang paling belum optimal?" value={data.gap_swdkllj} onChange={u("gap_swdkllj")} rows={3} />
           <Field label="4. Tindakan strategis dalam 30 hari ke depan?" value={data.tindakan30} onChange={u("tindakan30")} rows={3} />
           <Field label="2. Hambatan utama yang Anda lihat?" value={data.hambatan} onChange={u("hambatan")} rows={3} />
-          <Field label="5. Jika berhasil, dampaknya terhadap pendapatan cabang?" value={data.dampak_pendapatan} onChange={u("dampak_pendapatan")} rows={3} />
+          <Field label="5. Jika berhasil, dampaknya terhadap pendapatan wilayah?" value={data.dampak_pendapatan} onChange={u("dampak_pendapatan")} rows={3} />
           <Field label="3. Instansi mana yang bisa diajak kolaborasi?" value={data.instansi_kol} onChange={u("instansi_kol")} rows={3} />
         </div>
       </SectionCard>
@@ -630,9 +630,9 @@ function Sesi3({ data, onChange }) {
         </div>
       </SectionCard>
 
-      <SectionCard title="Audit Service Excellence Cabang Jambi" color={colors.s3}>
+      <SectionCard title="Audit Service Excellence Wilayah Jambi" color={colors.s3}>
         <p style={{ fontSize:13, color:"#64748B", marginBottom:16, fontStyle:"italic" }}>
-          Nilai kondisi pelayanan cabang Anda saat ini (1=Buruk, 5=Sangat Baik):
+          Nilai kondisi pelayanan wilayah Anda saat ini (1=Buruk, 5=Sangat Baik):
         </p>
         <ScoreField label="Waktu respons pertama kepada korban/ahli waris"
           value={data.skor_kecepatan} onChange={u("skor_kecepatan")} />
@@ -644,7 +644,7 @@ function Sesi3({ data, onChange }) {
           value={data.prioritas_perbaikan} onChange={u("prioritas_perbaikan")} rows={2} />
       </SectionCard>
 
-      <SectionCard title="Standar Pelayanan Cabang — Hasil Diskusi" color={colors.s3}>
+      <SectionCard title="Standar Pelayanan Wilayah — Hasil Diskusi" color={colors.s3}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
           <Field label="Standar KECEPATAN (waktu respons, verifikasi, eskalasi)"
             value={data.standar_kecepatan} onChange={u("standar_kecepatan")} rows={4}
@@ -678,7 +678,7 @@ function Sesi4({ data, onChange }) {
     <div>
       <p style={{ color:"#64748B", fontSize:14, marginBottom:24, lineHeight:1.7 }}>
         Sesi terakhir. Output utama: Action Plan 90 Hari yang akan Anda implementasikan
-        di Cabang Jambi setelah diklat ini.
+        di Wilayah Jambi setelah diklat ini.
       </p>
 
       <SectionCard title="Refleksi — Nilai AKHLAK" color={colors.s4}>
@@ -702,6 +702,18 @@ function Sesi4({ data, onChange }) {
         </div>
       </SectionCard>
 
+      <SectionCard title="Komitmen Nilai AKHLAK Pilihan Saya" color={colors.s4}>
+        <p style={{ fontSize:13, color:"#64748B", marginBottom:16, fontStyle:"italic" }}>
+          Selain Harmonis & Kolaboratif, tuliskan 1 nilai AKHLAK yang paling
+          ingin Anda perkuat secara personal beserta aksi konkretnya.
+        </p>
+        <Field label="Nilai AKHLAK yang saya pilih (Amanah / Kompeten / Loyal / Adaptif):"
+          value={data.akhlak_pilihan} onChange={u("akhlak_pilihan")} rows={1}
+          placeholder="Contoh: Kompeten" />
+        <Field label="Aksi konkret yang akan saya lakukan untuk nilai tersebut:"
+          value={data.akhlak_pilihan_komitmen} onChange={u("akhlak_pilihan_komitmen")} rows={3}
+          placeholder="Contoh: Saya akan mengikuti 1 webinar kepemimpinan per bulan dan membagikan learningnya ke tim..." />
+      </SectionCard>
       <SectionCard title="Diagnosa Hambatan Internal Tim" color={colors.s4}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
           <Field label="Hambatan KOMUNIKASI — informasi apa yang sering tersumbat?"
@@ -801,7 +813,7 @@ function Sesi4({ data, onChange }) {
           </div>
           <Field label="Bagaimana saya memastikan budaya ini berjalan meski saya tidak selalu hadir?"
             value={data.target90_sustainability} onChange={u("target90_sustainability")} rows={3} />
-          <Field label="Tanda keberhasilan 90 hari — apa yang akan berbeda di tim, pelayanan, dan pendapatan cabang?"
+          <Field label="Tanda keberhasilan 90 hari — apa yang akan berbeda di tim, pelayanan, dan pendapatan wilayah?"
             value={data.target90_success} onChange={u("target90_success")} rows={3} />
         </div>
 
@@ -927,7 +939,7 @@ export default function App() {
               Customer Focus for Business Growth
             </p>
             <p style={{ fontSize:13, color:"#64748B", marginTop:6, lineHeight:1.5 }}>
-              Jasa Raharja Cabang Jambi
+              Jasa Raharja Wilayah Jambi
             </p>
           </div>
 
@@ -993,7 +1005,7 @@ export default function App() {
                       boxShadow:"0 24px 80px rgba(0,0,0,.3)" }}>
           <div style={{ fontSize:56, marginBottom:16 }}>🎉</div>
           <h2 style={{ fontSize:28, fontWeight:700, color:"#0B2545", marginBottom:8 }}>
-            Selamat, {name}!
+            Selamat, Pak {name}!
           </h2>
           <p style={{ fontSize:16, color:"#C9A84C", fontWeight:600, marginBottom:16 }}>
             Diklat Customer Focus for Business Growth
