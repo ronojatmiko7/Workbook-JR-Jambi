@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 function generatePDFContent(data, name) {
   const lines = [];
   lines.push(`WORKBOOK DIKLAT — CUSTOMER FOCUS FOR BUSINESS GROWTH`);
-  lines.push(`Jasa Raharja Wilayah Jambi`);
+  lines.push(`Jasa Raharja Cabang Jambi`);
   lines.push(`Nama: ${name}`);
   lines.push(`Tanggal: ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`);
   lines.push(`${"─".repeat(60)}`);
@@ -101,82 +101,134 @@ ${content}
 }
 
 function generatePDFHTML(data, name) {
-  const sesiLabels = [
-    { key: "sesi1", title: "SESI 1 — Transformasi Pola Pikir Strategis", color: "#2E5FA3" },
-    { key: "sesi2", title: "SESI 2 — Growth Leadership", color: "#0D6E8A" },
-    { key: "sesi3", title: "SESI 3 — Service Excellence", color: "#7C3AED" },
-    { key: "sesi4", title: "SESI 4 — Budaya Sinergis AKHLAK", color: "#065F46" },
+  const sesiConfig = [
+    { key: "sesi1", title: "Transformasi Pola Pikir Strategis", num: "01", color: "#2E5FA3", light: "#EFF6FF" },
+    { key: "sesi2", title: "Growth Leadership",                  num: "02", color: "#0D6E8A", light: "#F0F9FF" },
+    { key: "sesi3", title: "Service Excellence",                 num: "03", color: "#7C3AED", light: "#F5F3FF" },
+    { key: "sesi4", title: "Budaya Sinergis AKHLAK",             num: "04", color: "#065F46", light: "#F0FDF4" },
   ];
 
   const fieldLabels = {
-    // Sesi 1
-    pct_operasional: "% Waktu Operasional", pct_problem: "% Problem Solving", pct_strategis: "% Waktu Strategis",
-    diskusi1: "Hal yang bisa didelegasikan", diskusi2: "5 jam strategis untuk",
-    gap_swdkllj: "Gap SWDKLLJ yang belum optimal", hambatan: "Hambatan utama", instansi_kol: "Instansi kolaborasi",
-    tindakan30: "Tindakan 30 hari", dampak_pendapatan: "Dampak pendapatan",
-    insight_s1: "Insight Strategis Sesi 1",
-    // Sesi 2
-    pct_adaptif: "% Tim Adaptif", pct_menunggu: "% Tim Menunggu", pct_resisten: "% Tim Resisten",
-    gap_swdkllj_s2: "Gap SWDKLLJ & pattern", hambatan_data: "Hambatan data", keputusan_data: "Keputusan berbasis data",
-    strategi_polres: "Strategi Polres/Polsek", strategi_pemda: "Strategi Pemda", strategi_rs: "Strategi RS Mitra",
-    insight_s2: "Insight Growth Leadership",
-    // Sesi 3
-    pelayanan_terbaik: "Pelayanan terbaik yang diingat", pelayanan_terburuk: "Pelayanan terburuk yang diingat",
-    skor_kecepatan: "Skor Kecepatan", skor_kemudahan: "Skor Kemudahan", skor_empati: "Skor Empati",
-    prioritas_perbaikan: "Prioritas Perbaikan",
-    standar_kecepatan: "Standar Kecepatan", standar_kemudahan: "Standar Kemudahan",
-    standar_empati: "Standar Empati", standar_followup: "Standar Follow-up",
-    // Sesi 4
-    akhlak_terapkan: "Nilai AKHLAK paling diterapkan", akhlak_menantang: "Nilai AKHLAK paling menantang",
-    hambatan_komunikasi: "Hambatan Komunikasi", hambatan_proses: "Hambatan Proses",
-    hambatan_perilaku: "Hambatan Perilaku", hambatan_sistem: "Hambatan Sistem",
-    harmonis_komitmen: "Komitmen Harmonis", kolaboratif_komitmen: "Komitmen Kolaboratif",
-    target30_tim: "Target 30 Hari — Tim", target30_pelayanan: "Target 30 Hari — Pelayanan",
-    target30_instansi: "Target 30 Hari — Instansi",
-    target60_sistem: "Target 60 Hari — Sistem", target60_indikator: "Target 60 Hari — Indikator",
-    target90_sustainability: "Target 90 Hari — Keberlanjutan", target90_success: "Tanda Keberhasilan 90 Hari",
-    komitmen_publik: "Komitmen Publik",
+    pct_operasional:"% Waktu Operasional", pct_problem:"% Problem Solving", pct_strategis:"% Waktu Strategis",
+    diskusi1:"Hal yang bisa didelegasikan", diskusi2:"5 jam strategis untuk",
+    gap_swdkllj:"Gap SWDKLLJ yang belum optimal", hambatan:"Hambatan utama", instansi_kol:"Instansi kolaborasi",
+    tindakan30:"Tindakan 30 hari", dampak_pendapatan:"Dampak pendapatan", insight_s1:"Insight Strategis Sesi 1",
+    pct_adaptif:"% Tim Adaptif", pct_menunggu:"% Tim Menunggu", pct_resisten:"% Tim Resisten",
+    gap_swdkllj_s2:"Gap SWDKLLJ & Pattern Data", hambatan_data:"Hambatan Data", keputusan_data:"Keputusan Berbasis Data",
+    strategi_polres:"Strategi Polres/Polsek", strategi_pemda:"Strategi Pemda", strategi_rs:"Strategi RS Mitra",
+    insight_s2:"Insight Growth Leadership",
+    pelayanan_terbaik:"Pelayanan Terbaik yang Diingat", pelayanan_terburuk:"Pelayanan Terburuk yang Diingat",
+    skor_kecepatan:"Skor Kecepatan (1-5)", skor_kemudahan:"Skor Kemudahan (1-5)", skor_empati:"Skor Empati (1-5)",
+    prioritas_perbaikan:"Prioritas Perbaikan Utama",
+    standar_kecepatan:"Standar Kecepatan", standar_kemudahan:"Standar Kemudahan",
+    standar_empati:"Standar Empati", standar_followup:"Standar Follow-up",
+    akhlak_terapkan:"Nilai AKHLAK Paling Diterapkan", akhlak_menantang:"Nilai AKHLAK Paling Menantang",
+    hambatan_komunikasi:"Hambatan Komunikasi", hambatan_proses:"Hambatan Proses",
+    hambatan_perilaku:"Hambatan Perilaku", hambatan_sistem:"Hambatan Sistem",
+    harmonis_komitmen:"Komitmen Harmonis", kolaboratif_komitmen:"Komitmen Kolaboratif",
+    target30_tim:"Target 30 Hari — Tim", target30_pelayanan:"Target 30 Hari — Pelayanan",
+    target30_instansi:"Target 30 Hari — Kolaborasi Instansi",
+    target60_sistem:"Target 60 Hari — Sistem/Proses", target60_indikator:"Target 60 Hari — Indikator Kemajuan",
+    target90_sustainability:"Target 90 Hari — Keberlanjutan", target90_success:"Tanda Keberhasilan 90 Hari",
+    komitmen_publik:"Komitmen Publik",
   };
 
-  let sectionsHTML = "";
-  sesiLabels.forEach(({ key, title, color }, idx) => {
-    const sesiData = data[key] || {};
-    const fields = Object.entries(sesiData)
-      .filter(([, v]) => v && v.trim())
-      .map(([k, v]) => `
-        <div class="field">
-          <div class="field-label">${fieldLabels[k] || k.replace(/_/g, " ")}</div>
-          <div class="field-value" style="border-color:${color}">${v.replace(/\n/g, "<br>")}</div>
-        </div>`).join("");
+  // Group insight fields separately for highlight treatment
+  const insightKeys = new Set(["insight_s1", "insight_s2", "prioritas_perbaikan", "komitmen_publik"]);
 
-    if (fields) {
-      sectionsHTML += `
-      <div class="section${idx > 0 ? " page-break" : ""}">
-        <div class="sesi-num">SESI ${idx + 1} / 4</div>
-        <div class="section-title" style="background:${color}">${title}</div>
-        ${fields}
-      </div>`;
-    }
+  let sectionsHTML = "";
+  sesiConfig.forEach(({ key, title, num, color, light }, idx) => {
+    const sesiData = data[key] || {};
+    const entries = Object.entries(sesiData).filter(([, v]) => v && String(v).trim());
+    if (!entries.length) return;
+
+    const fieldsHTML = entries.map(([k, v]) => {
+      const isInsight = insightKeys.has(k);
+      const label = fieldLabels[k] || k.replace(/_/g, " ");
+      return isInsight
+        ? `<div class="field field-insight" style="border-left-color:${color};background:${light}">
+             <div class="field-label" style="color:${color}">${label}</div>
+             <div class="field-value-insight">${String(v).replace(/\n/g, "<br>")}</div>
+           </div>`
+        : `<div class="field">
+             <div class="field-label">${label}</div>
+             <div class="field-value" style="border-left-color:${color}">${String(v).replace(/\n/g, "<br>")}</div>
+           </div>`;
+    }).join("");
+
+    sectionsHTML += `
+    <div class="sesi-block${idx > 0 ? " page-break" : ""}">
+      <div class="sesi-header" style="background:${color}">
+        <div class="sesi-header-num">${num}</div>
+        <div class="sesi-header-title">SESI ${num} — ${title}</div>
+        <div class="sesi-header-badge">CUSTOMER FOCUS FOR BUSINESS GROWTH</div>
+      </div>
+      <div class="sesi-body" style="border-color:${color}20">
+        ${fieldsHTML}
+      </div>
+    </div>`;
   });
 
+  // Action Plan fields grouped by phase
   const ap = data.sesi4 || {};
-  const apFields = [
-    ["harmonis_komitmen", "Komitmen Nilai HARMONIS", "#16A34A"],
-    ["kolaboratif_komitmen", "Komitmen Nilai KOLABORATIF", "#9F1239"],
-    ["target30_tim", "Target 30 Hari — Tim & Komunikasi", "#2E5FA3"],
-    ["target30_pelayanan", "Target 30 Hari — Pelayanan", "#0D6E8A"],
-    ["target30_instansi", "Target 30 Hari — Kolaborasi Instansi", "#16A34A"],
-    ["target60_sistem", "Target 60 Hari — Perubahan Sistem", "#0D6E8A"],
-    ["target60_indikator", "Target 60 Hari — Indikator Kemajuan", "#0D6E8A"],
-    ["target90_sustainability", "Target 90 Hari — Keberlanjutan", "#065F46"],
-    ["target90_success", "Tanda Keberhasilan 90 Hari", "#065F46"],
-    ["komitmen_publik", "Komitmen Publik", "#C9A84C"],
-  ].filter(([k]) => ap[k] && ap[k].trim())
-    .map(([k, label, color]) => `
-    <div class="ap-field">
-      <div class="ap-label" style="color:${color}">${label}</div>
-      <div class="ap-value" style="border-color:${color}">${ap[k].replace(/\n/g, "<br>")}</div>
-    </div>`).join("");
+  const apPhases = [
+    {
+      label: "KOMITMEN NILAI", color: "#0B2545", bg: "#F8FAFC",
+      fields: [
+        ["harmonis_komitmen",    "Nilai HARMONIS yang Akan Diperkuat",   "#16A34A"],
+        ["kolaboratif_komitmen", "Nilai KOLABORATIF yang Akan Diperkuat","#9F1239"],
+      ]
+    },
+    {
+      label: "TARGET 30 HARI", color: "#2E5FA3", bg: "#EFF6FF",
+      fields: [
+        ["target30_tim",      "Tim & Komunikasi",     "#2E5FA3"],
+        ["target30_pelayanan","Pelayanan",             "#2E5FA3"],
+        ["target30_instansi", "Kolaborasi Instansi",  "#2E5FA3"],
+      ]
+    },
+    {
+      label: "TARGET 60 HARI", color: "#0D6E8A", bg: "#F0F9FF",
+      fields: [
+        ["target60_sistem",    "Perubahan Sistem/Proses",    "#0D6E8A"],
+        ["target60_indikator", "Indikator Kemajuan Budaya",  "#0D6E8A"],
+      ]
+    },
+    {
+      label: "TARGET 90 HARI", color: "#065F46", bg: "#F0FDF4",
+      fields: [
+        ["target90_sustainability","Keberlanjutan Tanpa Kehadiran Saya","#065F46"],
+        ["target90_success",       "Tanda Keberhasilan 90 Hari",        "#065F46"],
+      ]
+    },
+  ];
+
+  let apHTML = "";
+  apPhases.forEach(({ label, color, bg, fields }) => {
+    const phaseFields = fields
+      .filter(([k]) => ap[k] && ap[k].trim())
+      .map(([k, lbl, col]) => `
+        <div class="ap-field">
+          <div class="ap-field-label" style="color:${col}">${lbl}</div>
+          <div class="ap-field-value" style="border-left-color:${col}">${ap[k].replace(/\n/g,"<br>")}</div>
+        </div>`).join("");
+    if (!phaseFields) return;
+    apHTML += `
+    <div class="ap-phase" style="background:${bg};border-left:4px solid ${color}">
+      <div class="ap-phase-label" style="color:${color}">${label}</div>
+      ${phaseFields}
+    </div>`;
+  });
+
+  // Komitmen publik as highlight
+  const publik = ap.komitmen_publik;
+  if (publik && publik.trim()) {
+    apHTML += `
+    <div class="ap-publik">
+      <div class="ap-publik-label">KOMITMEN PUBLIK</div>
+      <div class="ap-publik-text">${publik.replace(/\n/g,"<br>")}</div>
+    </div>`;
+  }
 
   return `<!DOCTYPE html>
 <html lang="id">
@@ -184,57 +236,128 @@ function generatePDFHTML(data, name) {
 <meta charset="UTF-8">
 <title>Workbook — ${name}</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'IBM Plex Sans',sans-serif;background:#fff;color:#0B2545;padding:40px;max-width:820px;margin:0 auto}
-  .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #C9A84C;padding-bottom:18px;margin-bottom:28px}
-  .header-left h1{font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-  .header-left p{font-size:12px;color:#64748B;margin-top:3px}
-  .header-right{text-align:right;font-size:11px;color:#64748B}
-  .header-right strong{display:block;font-size:14px;color:#0B2545;font-weight:700}
-  .section{margin-bottom:24px}
-  .page-break{page-break-before:always;padding-top:32px}
-  .sesi-num{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:#94A3B8;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
-  .section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;color:#fff;padding:7px 12px;margin-bottom:12px}
-  .field{margin-bottom:10px;page-break-inside:avoid}
-  .field-label{font-size:9px;font-weight:600;color:#94A3B8;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
-  .field-value{font-size:12px;color:#0F172A;line-height:1.6;padding:8px 12px;background:#F4F6FB;border-left:3px solid #2E5FA3}
-  .divider{page-break-before:always;padding-top:32px;border-top:3px solid #0B2545;margin-bottom:28px}
-  .ap-header{margin-bottom:20px}
-  .ap-header h2{font-size:20px;font-weight:700;color:#0B2545}
-  .ap-header p{font-size:11px;color:#64748B;margin-top:4px}
-  .ap-field{margin-bottom:14px;page-break-inside:avoid}
-  .ap-label{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-  .ap-value{font-size:12px;color:#0F172A;line-height:1.6;padding:10px 14px;background:#F4F6FB;border-left:3px solid #C9A84C}
-  .footer{margin-top:36px;padding-top:14px;border-top:1px solid #CBD5E1;font-size:10px;color:#94A3B8;display:flex;justify-content:space-between;page-break-inside:avoid}
-  @media print{body{padding:20px}@page{margin:15mm}.page-break{page-break-before:always}.divider{page-break-before:always}}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',Arial,sans-serif;background:#fff;color:#0B2545;
+     padding:32px 36px;max-width:780px;margin:0 auto;font-size:13px}
+
+/* ── DOC HEADER ── */
+.doc-header{display:flex;justify-content:space-between;align-items:flex-end;
+            padding-bottom:14px;margin-bottom:28px;border-bottom:3px solid #C9A84C}
+.doc-header-left{}
+.doc-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+           color:#94A3B8;font-family:'IBM Plex Mono',monospace;margin-bottom:4px}
+.doc-subtitle{font-size:18px;font-weight:700;color:#0B2545;line-height:1.2}
+.doc-org{font-size:12px;color:#C9A84C;font-weight:600;margin-top:2px}
+.doc-header-right{text-align:right}
+.doc-name{font-size:16px;font-weight:700;color:#0B2545}
+.doc-date{font-size:11px;color:#94A3B8;margin-top:2px}
+.doc-colorbar{display:flex;gap:3px;margin-bottom:10px}
+.doc-colorbar-item{height:4px;border-radius:2px;flex:1}
+
+/* ── SESI BLOCK ── */
+.sesi-block{margin-bottom:28px}
+.page-break{page-break-before:always;padding-top:28px}
+.sesi-header{display:flex;align-items:center;gap:12px;
+             padding:10px 16px;border-radius:8px 8px 0 0;color:#fff}
+.sesi-header-num{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;
+                  opacity:.4;line-height:1;flex-shrink:0}
+.sesi-header-title{font-size:13px;font-weight:700;letter-spacing:.3px;flex:1}
+.sesi-header-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:1.5px;
+                    text-transform:uppercase;opacity:.6;flex-shrink:0}
+.sesi-body{border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;
+           padding:14px 16px;background:#fff}
+
+/* ── FIELDS ── */
+.field{margin-bottom:10px;page-break-inside:avoid}
+.field-label{font-size:9px;font-weight:700;color:#94A3B8;letter-spacing:1.5px;
+             text-transform:uppercase;margin-bottom:4px;
+             font-family:'IBM Plex Mono',monospace}
+.field-value{font-size:12px;color:#1E293B;line-height:1.65;padding:7px 10px 7px 12px;
+             background:#F8FAFC;border-left:3px solid #CBD5E1}
+.field-insight{padding:10px 12px;border-left:3px solid;border-radius:0 6px 6px 0;
+               margin-bottom:10px;page-break-inside:avoid}
+.field-value-insight{font-size:12.5px;color:#1E293B;line-height:1.7;font-weight:500;margin-top:4px}
+
+/* ── ACTION PLAN HEADER ── */
+.ap-header-block{page-break-before:always;padding-top:28px;margin-bottom:20px}
+.ap-header-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;
+                    letter-spacing:3px;text-transform:uppercase;color:#C9A84C;margin-bottom:6px}
+.ap-header-title{font-size:22px;font-weight:700;color:#0B2545;margin-bottom:4px}
+.ap-header-sub{font-size:11px;color:#64748B}
+.ap-header-rule{height:3px;background:linear-gradient(90deg,#0B2545,#2E5FA3,#C9A84C);
+                margin-top:14px;border-radius:2px}
+
+/* ── ACTION PLAN PHASES ── */
+.ap-phase{padding:12px 14px;border-radius:6px;margin-bottom:12px;page-break-inside:avoid}
+.ap-phase-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;
+                letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.ap-field{margin-bottom:9px;page-break-inside:avoid}
+.ap-field-label{font-size:9px;font-weight:700;color:#64748B;letter-spacing:1px;
+                text-transform:uppercase;margin-bottom:3px;font-family:'IBM Plex Mono',monospace}
+.ap-field-value{font-size:12px;color:#1E293B;line-height:1.65;padding:7px 10px 7px 12px;
+                background:rgba(255,255,255,.8);border-left:3px solid}
+
+/* ── KOMITMEN PUBLIK ── */
+.ap-publik{background:#0B2545;border-radius:8px;padding:16px 18px;
+           margin-top:16px;page-break-inside:avoid}
+.ap-publik-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;
+                  letter-spacing:2px;text-transform:uppercase;color:#C9A84C;margin-bottom:8px}
+.ap-publik-text{font-size:13px;color:#fff;line-height:1.7;font-style:italic}
+
+/* ── FOOTER ── */
+.doc-footer{margin-top:32px;padding-top:12px;border-top:1px solid #E2E8F0;
+            display:flex;justify-content:space-between;font-size:10px;color:#94A3B8;
+            page-break-inside:avoid}
+
+@media print{
+  body{padding:15px 20px}
+  @page{size:A4 portrait;margin:12mm 15mm}
+  .page-break{page-break-before:always}
+  .ap-header-block{page-break-before:always}
+  .field{page-break-inside:avoid}
+  .ap-field{page-break-inside:avoid}
+  .ap-phase{page-break-inside:avoid}
+  .ap-publik{page-break-inside:avoid}
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="header-left">
-    <h1>Workbook Diklat</h1>
-    <p>Customer Focus for Business Growth — Jasa Raharja Jambi</p>
+
+<div class="doc-header">
+  <div class="doc-header-left">
+    <div class="doc-colorbar">
+      ${["#2E5FA3","#0D6E8A","#7C3AED","#065F46","#16A34A","#9F1239"]
+        .map(c=>`<div class="doc-colorbar-item" style="background:${c}"></div>`).join("")}
+    </div>
+    <div class="doc-title">Performa Consulting</div>
+    <div class="doc-subtitle">Workbook Diklat</div>
+    <div class="doc-org">Customer Focus for Business Growth — Jasa Raharja Wilayah Jambi</div>
   </div>
-  <div class="header-right">
-    <strong>${name}</strong>
-    ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+  <div class="doc-header-right">
+    <div class="doc-name">${name}</div>
+    <div class="doc-date">${new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})}</div>
   </div>
 </div>
 
 ${sectionsHTML}
 
-<div class="divider"></div>
-<div class="ap-header">
-  <h2>Action Plan 90 Hari</h2>
-  <p>Komitmen perubahan yang akan diimplementasikan di Wilayah Jambi</p>
+<div class="ap-header-block">
+  <div class="ap-header-eyebrow">★ Output Utama Diklat</div>
+  <div class="ap-header-title">Action Plan 90 Hari</div>
+  <div class="ap-header-sub">Komitmen perubahan yang akan diimplementasikan di Wilayah Jambi</div>
+  <div class="ap-header-rule"></div>
 </div>
-${apFields || '<p style="color:#94A3B8;font-style:italic;font-size:12px">Action Plan belum diisi.</p>'}
 
-<div class="footer">
+${apHTML || '<p style="color:#94A3B8;font-style:italic;font-size:12px">Action Plan belum diisi.</p>'}
+
+<div class="doc-footer">
   <span>Performa Consulting  |  Rono Jatmiko</span>
   <span>Dicetak: ${new Date().toLocaleDateString("id-ID")}</span>
 </div>
+
 </body>
 </html>`;
 }
@@ -405,7 +528,7 @@ function Sesi1({ data, onChange }) {
           <Field label="1. Segmen/area SWDKLLJ yang paling belum optimal?" value={data.gap_swdkllj} onChange={u("gap_swdkllj")} rows={3} />
           <Field label="4. Tindakan strategis dalam 30 hari ke depan?" value={data.tindakan30} onChange={u("tindakan30")} rows={3} />
           <Field label="2. Hambatan utama yang Anda lihat?" value={data.hambatan} onChange={u("hambatan")} rows={3} />
-          <Field label="5. Jika berhasil, dampaknya terhadap pendapatan wilayah?" value={data.dampak_pendapatan} onChange={u("dampak_pendapatan")} rows={3} />
+          <Field label="5. Jika berhasil, dampaknya terhadap pendapatan cabang?" value={data.dampak_pendapatan} onChange={u("dampak_pendapatan")} rows={3} />
           <Field label="3. Instansi mana yang bisa diajak kolaborasi?" value={data.instansi_kol} onChange={u("instansi_kol")} rows={3} />
         </div>
       </SectionCard>
@@ -507,9 +630,9 @@ function Sesi3({ data, onChange }) {
         </div>
       </SectionCard>
 
-      <SectionCard title="Audit Service Excellence Wilayah Jambi" color={colors.s3}>
+      <SectionCard title="Audit Service Excellence Cabang Jambi" color={colors.s3}>
         <p style={{ fontSize:13, color:"#64748B", marginBottom:16, fontStyle:"italic" }}>
-          Nilai kondisi pelayanan wilayah Anda saat ini (1=Buruk, 5=Sangat Baik):
+          Nilai kondisi pelayanan cabang Anda saat ini (1=Buruk, 5=Sangat Baik):
         </p>
         <ScoreField label="Waktu respons pertama kepada korban/ahli waris"
           value={data.skor_kecepatan} onChange={u("skor_kecepatan")} />
@@ -521,7 +644,7 @@ function Sesi3({ data, onChange }) {
           value={data.prioritas_perbaikan} onChange={u("prioritas_perbaikan")} rows={2} />
       </SectionCard>
 
-      <SectionCard title="Standar Pelayanan Wilayah — Hasil Diskusi" color={colors.s3}>
+      <SectionCard title="Standar Pelayanan Cabang — Hasil Diskusi" color={colors.s3}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
           <Field label="Standar KECEPATAN (waktu respons, verifikasi, eskalasi)"
             value={data.standar_kecepatan} onChange={u("standar_kecepatan")} rows={4}
@@ -555,7 +678,7 @@ function Sesi4({ data, onChange }) {
     <div>
       <p style={{ color:"#64748B", fontSize:14, marginBottom:24, lineHeight:1.7 }}>
         Sesi terakhir. Output utama: Action Plan 90 Hari yang akan Anda implementasikan
-        di Wilayah Jambi setelah diklat ini.
+        di Cabang Jambi setelah diklat ini.
       </p>
 
       <SectionCard title="Refleksi — Nilai AKHLAK" color={colors.s4}>
@@ -678,7 +801,7 @@ function Sesi4({ data, onChange }) {
           </div>
           <Field label="Bagaimana saya memastikan budaya ini berjalan meski saya tidak selalu hadir?"
             value={data.target90_sustainability} onChange={u("target90_sustainability")} rows={3} />
-          <Field label="Tanda keberhasilan 90 hari — apa yang akan berbeda di tim, pelayanan, dan pendapatan wilayah?"
+          <Field label="Tanda keberhasilan 90 hari — apa yang akan berbeda di tim, pelayanan, dan pendapatan cabang?"
             value={data.target90_success} onChange={u("target90_success")} rows={3} />
         </div>
 
@@ -804,7 +927,7 @@ export default function App() {
               Customer Focus for Business Growth
             </p>
             <p style={{ fontSize:13, color:"#64748B", marginTop:6, lineHeight:1.5 }}>
-              Jasa Raharja Wilayah Jambi
+              Jasa Raharja Cabang Jambi
             </p>
           </div>
 
@@ -870,7 +993,7 @@ export default function App() {
                       boxShadow:"0 24px 80px rgba(0,0,0,.3)" }}>
           <div style={{ fontSize:56, marginBottom:16 }}>🎉</div>
           <h2 style={{ fontSize:28, fontWeight:700, color:"#0B2545", marginBottom:8 }}>
-            Selamat, Pak {name}!
+            Selamat, {name}!
           </h2>
           <p style={{ fontSize:16, color:"#C9A84C", fontWeight:600, marginBottom:16 }}>
             Diklat Customer Focus for Business Growth
